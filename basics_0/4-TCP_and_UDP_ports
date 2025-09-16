@@ -6,17 +6,20 @@ OS_NAME=$(uname -s)
 case "$OS_NAME" in
   Linux)
     if command -v netstat >/dev/null 2>&1; then
-      # Only listening sockets, numeric, include PID/Program, TCP and UDP
-      netstat -lntup 2>/dev/null || ss -lntup
+      # Listening sockets (TCP/UDP/UNIX) with PID/Program name; no -n to show service names like example
+      netstat -lptux 2>/dev/null
     elif command -v ss >/dev/null 2>&1; then
-      ss -lntup
+      # Fallback: show TCP/UDP/UNIX listening with processes
+      ss -lptu
+      echo
+      ss -lxp
     else
       echo "Error: Neither netstat nor ss is available on this system." >&2
       exit 1
     fi
     ;;
   Darwin)
-    # macOS netstat doesn't support -p for PID/Program; use lsof instead
+    # macOS: format differs; use lsof as an approximation
     echo "TCP (LISTEN):"
     lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || true
     echo
@@ -24,11 +27,12 @@ case "$OS_NAME" in
     lsof -nP -iUDP 2>/dev/null || true
     ;;
   *)
-    # Try generic fallbacks
     if command -v netstat >/dev/null 2>&1; then
-      netstat -lpn 2>/dev/null || netstat -anp 2>/dev/null
+      netstat -lptux 2>/dev/null
     elif command -v ss >/dev/null 2>&1; then
-      ss -lntup
+      ss -lptu
+      echo
+      ss -lxp
     elif command -v lsof >/dev/null 2>&1; then
       echo "TCP (LISTEN):"
       lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || true
@@ -40,4 +44,4 @@ case "$OS_NAME" in
       exit 1
     fi
     ;;
- esac
+esac
