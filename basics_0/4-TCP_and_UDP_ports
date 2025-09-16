@@ -1,3 +1,43 @@
-#!/usr/bin/bash
-# Display listening TCP and UDP ports with PID/Program name
-netstat -lntup
+#!/usr/bin/env bash
+# Display listening ports with PID/Program name
+
+OS_NAME=$(uname -s)
+
+case "$OS_NAME" in
+  Linux)
+    if command -v netstat >/dev/null 2>&1; then
+      # Only listening sockets, numeric, include PID/Program, TCP and UDP
+      netstat -lntup 2>/dev/null || ss -lntup
+    elif command -v ss >/dev/null 2>&1; then
+      ss -lntup
+    else
+      echo "Error: Neither netstat nor ss is available on this system." >&2
+      exit 1
+    fi
+    ;;
+  Darwin)
+    # macOS netstat doesn't support -p for PID/Program; use lsof instead
+    echo "TCP (LISTEN):"
+    lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || true
+    echo
+    echo "UDP (open sockets):"
+    lsof -nP -iUDP 2>/dev/null || true
+    ;;
+  *)
+    # Try generic fallbacks
+    if command -v netstat >/dev/null 2>&1; then
+      netstat -lpn 2>/dev/null || netstat -anp 2>/dev/null
+    elif command -v ss >/dev/null 2>&1; then
+      ss -lntup
+    elif command -v lsof >/dev/null 2>&1; then
+      echo "TCP (LISTEN):"
+      lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null || true
+      echo
+      echo "UDP (open sockets):"
+      lsof -nP -iUDP 2>/dev/null || true
+    else
+      echo "Error: No suitable tool found (netstat/ss/lsof)." >&2
+      exit 1
+    fi
+    ;;
+ esac
