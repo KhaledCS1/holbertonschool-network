@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# This script sends 5 ICMP echo requests to a specified IP address provided as an argument
+# This script pings an IP address passed as an argument 5 times
 
-# Verify that an IP address argument is provided
+# Check if an argument is provided
 if [ $# -eq 0 ]; then
     echo "Usage: 5-is_the_host_on_the_network {IP_ADDRESS}"
     exit 1
 fi
 
-# Send 5 ICMP echo requests to the specified IP address
+# Ping the IP address 5 times
 ping -c 5 "$1"
