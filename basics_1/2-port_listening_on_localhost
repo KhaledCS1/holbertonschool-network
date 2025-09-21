@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Listen on localhost:98 (privileged port; use sudo)
+
+set -euo pipefail
+
+if ! command -v nc >/dev/null 2>&1; then
+  echo "Error: 'nc' (netcat) is required but not installed." >&2
+  exit 1
+fi
+
+help_out="$(nc -h 2>&1 || true)"
+if echo "$help_out" | grep -qi 'OpenBSD'; then
+  exec nc -l localhost 98
+else
+  exec nc -l -p 98 -s localhost || exec nc -l localhost 98
+fi
