@@ -42,7 +42,7 @@ EOF
 
   # Overwrite in place (some systems prevent unlinking /etc/hosts)
   # Preserve existing inode/permissions; requires write access
-  if ! cat "$tmpfile" | tee "$HOSTS_FILE" >/dev/null; then
+  if ! tee "$HOSTS_FILE" >/dev/null < "$tmpfile"; then
     echo "Error: failed to write to $HOSTS_FILE" >&2
     rm -f "$tmpfile"
     exit 1
