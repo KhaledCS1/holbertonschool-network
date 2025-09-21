@@ -40,8 +40,13 @@ EOF
     if (!drop) print
   }' "$HOSTS_FILE" >>"$tmpfile"
 
-  # Replace atomically
-  install -m 644 "$tmpfile" "$HOSTS_FILE"
+  # Overwrite in place (some systems prevent unlinking /etc/hosts)
+  # Preserve existing inode/permissions; requires write access
+  if ! cat "$tmpfile" | tee "$HOSTS_FILE" >/dev/null; then
+    echo "Error: failed to write to $HOSTS_FILE" >&2
+    rm -f "$tmpfile"
+    exit 1
+  fi
   rm -f "$tmpfile"
 }
 
