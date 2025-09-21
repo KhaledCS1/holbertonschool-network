@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
-# Show all active IPv4 IPs on this machine (one per line)
+# Print active IPv4s (one per line)
 
 set -o errexit
 set -o nounset
 set -o pipefail
 
 if command -v ip >/dev/null 2>&1; then
-    # Linux: use iproute2
+    # Linux
     ip -4 addr show | awk '$1=="inet" {print $2}' | cut -d/ -f1
 elif command -v ifconfig >/dev/null 2>&1; then
-    # BSD/macOS: use ifconfig
-    # Extract the second field after 'inet ' which is the IPv4 address
+    # macOS/BSD
     ifconfig | awk '$1=="inet" {print $2}'
 else
     echo "Error: neither 'ip' nor 'ifconfig' is available on this system." >&2
