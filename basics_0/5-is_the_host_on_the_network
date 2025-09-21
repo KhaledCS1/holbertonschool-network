@@ -6,5 +6,5 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-# Ping the IP address 5 times
-ping -c 5 "$1"
+# Ping the IP address 5 times (numeric output, no DNS resolution)
+ping -n -c 5 "$1"
