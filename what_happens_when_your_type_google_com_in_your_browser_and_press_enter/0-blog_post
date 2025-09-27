@@ -1,0 +1,108 @@
+# What Happens When You Type https://www.google.com and Press Enter?
+
+The question *“What happens when you type a URL and press Enter?”* is widely regarded as a classic interview question in software engineering. Although it appears simple on the surface, it covers critical aspects of computer networking, security, and system design. This article provides a step-by-step explanation of the entire workflow involved when you type **https://www.google.com** into your browser and press **Enter**.
+
+---
+
+## 1. DNS Resolution
+The first step is to resolve the human-readable domain name into an IP address.  
+- The browser first checks its own cache.  
+- If not available, the operating system resolver is consulted.  
+- If still unresolved, the request is sent to a recursive DNS server (often provided by your ISP or Google DNS such as `8.8.8.8`).  
+- The recursive server queries authoritative DNS servers until the IP address for `www.google.com` is found.  
+
+At this stage, the browser knows the server’s IP address.
+
+---
+
+## 2. Establishing a TCP/IP Connection
+Once the IP address is known, the browser initiates a **TCP connection**:  
+- The connection is established through the **three-way handshake** (SYN → SYN/ACK → ACK).  
+- This handshake ensures reliability, ordering, and error-checking for transmitted packets.  
+- The communication is carried over the **Internet Protocol (IP)** and routed across multiple network devices before reaching Google’s infrastructure.
+
+---
+
+## 3. Firewall Inspection
+Before reaching Google’s internal systems, the packets pass through **firewalls**:  
+- Firewalls apply predefined security rules.  
+- Malicious or unauthorized traffic is blocked.  
+- Only valid requests (such as HTTPS traffic on port 443) are allowed to pass.  
+
+This ensures that the connection is both secure and controlled.
+
+---
+
+## 4. HTTPS and SSL/TLS Handshake
+Since the request uses **HTTPS**, encryption is mandatory:  
+- The browser and the server perform an **SSL/TLS handshake**.  
+- The handshake negotiates encryption algorithms and establishes session keys.  
+- The server provides a **digital certificate** issued by a trusted Certificate Authority (CA).  
+- The process guarantees:  
+  - **Confidentiality**: Data is encrypted.  
+  - **Integrity**: Data cannot be altered in transit.  
+  - **Authentication**: The browser confirms it is indeed communicating with Google.  
+
+---
+
+## 5. Load Balancing
+Google’s infrastructure is distributed across the globe. A single server cannot handle all incoming requests:  
+- A **load balancer** distributes requests among multiple backend servers.  
+- This improves scalability, ensures availability, and optimizes response time.  
+- Load balancers may also perform **health checks** to ensure requests are routed only to functional servers.
+
+---
+
+## 6. Web Server
+The request is directed to a **web server** (for example, Nginx or Google’s proprietary system):  
+- The web server handles the incoming HTTP request.  
+- It serves static resources such as HTML, CSS, JavaScript, and images.  
+- For dynamic content, it forwards the request to the application server.
+
+---
+
+## 7. Application Server
+The **application server** executes the application logic:  
+- In the case of Google Search, the application server processes the query string provided by the user.  
+- It may interact with other services, ranking algorithms, personalization modules, or distributed systems.  
+
+This is where the “business logic” resides.
+
+---
+
+## 8. Database Query
+For most applications, data must be retrieved from a **database**:  
+- The application server issues queries to Google’s distributed database systems such as **Bigtable** or **Spanner**.  
+- The database retrieves and returns the required structured data.  
+- This information is then processed and sent back to the application server.
+
+---
+
+## 9. Response Transmission
+The application server sends the processed data back to the web server.  
+The web server then constructs an **HTTP response** and sends it back to the client through:  
+- Load balancer  
+- Firewalls  
+- The internet backbone  
+- ISP routers and local networks  
+
+Eventually, the response reaches the user’s browser.
+
+---
+
+## 10. Browser Rendering
+Upon receiving the response, the browser performs the following steps:  
+- Parses the HTML.  
+- Builds the **Document Object Model (DOM)**.  
+- Downloads and applies CSS styles.  
+- Executes JavaScript.  
+- Renders the final visual interface.  
+
+Within milliseconds, the familiar Google Search homepage is displayed.
+
+---
+
+## Conclusion
+Typing `https://www.google.com` and pressing Enter triggers a sophisticated series of operations that span across networking, security, distributed systems, and client-side rendering. Understanding this process demonstrates mastery of fundamental computer science concepts and provides valuable insight for both academic study and technical interviews.  
+
+---
